@@ -92,6 +92,7 @@ createDirectoryIfNeeded(outputDirectory);
         example = example.replace(/<!--[\s\S]*?-->/gm, '');
 
         // Insert some specific JavaScript
+        example += '<script src="https://cdn.jsdelivr.net/npm/boosted@5/dist/js/boosted.bundle.min.js" crossorigin="anonymous"></script>';
         if (file[2]) {
           example += '<script type="text/javascript">' + file[2] + '</script>'
         }
