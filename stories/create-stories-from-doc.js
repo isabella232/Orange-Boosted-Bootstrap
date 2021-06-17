@@ -49,7 +49,14 @@ const files = [
   ['Spinners', '../_site/docs/5.0/components/spinners/index.html'],
   ['SteppedProcess', '../_site/docs/5.0/components/stepped-process/index.html'],
   ['Toasts', '../_site/docs/5.0/components/toasts/index.html'],
-  ['Tooltips', '../_site/docs/5.0/components/tooltips/index.html'],
+  [
+    'Tooltips',
+    '../_site/docs/5.0/components/tooltips/index.html',
+    'var tooltipTriggerList = [].slice.call(document.querySelectorAll(\'[data-bs-toggle="tooltip"]\'));\
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {\
+      return new boosted.Tooltip(tooltipTriggerEl);\
+    })\
+  '],
 ];
 
 const outputDirectory = __dirname + '/auto';
@@ -65,12 +72,9 @@ createDirectoryIfNeeded(outputDirectory);
       // Some timeouts and `page.waitForNavigation` have been added to avoid
       // 'Error: Execution context was destroyed, most likely because of a navigation.':
       await Promise.all([
-        page.waitForNavigation({ timeout: 60000 }),
-        page.goto('file://' + __dirname + '/' + file[1], {
-          waitUntil: "networkidle0",
-          timeout: 60000
-        }),
-        page.waitForNavigation({ timeout: 60000 })
+        page.waitForNavigation(),
+        page.goto('file://' + __dirname + '/' + file[1]),
+        page.waitForNavigation()
       ]);
 
       const e = await page.evaluate(() => 
@@ -86,6 +90,11 @@ createDirectoryIfNeeded(outputDirectory);
 
         // Automatically remove HTML comments that would break the story
         example = example.replace(/<!--[\s\S]*?-->/gm, '');
+
+        // Insert some specific JavaScript
+        if (file[2]) {
+          example += '<script type="text/javascript">' + file[2] + '</script>'
+        }
 
         createDirectoryIfNeeded(outputFileDirectory)
 
